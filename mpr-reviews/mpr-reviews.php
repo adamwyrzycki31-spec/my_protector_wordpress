@@ -28,7 +28,7 @@ define('MPR_PLUGIN_BASENAME', plugin_basename(__FILE__));
 /**
  * Main MPR_Reviews class
  */
-final class MPR_Reviews {
+class MPR_Reviews {
     
     /**
      * Single instance
@@ -49,32 +49,15 @@ final class MPR_Reviews {
      * Constructor
      */
     private function __construct() {
-        $this->load_dependencies();
         $this->init_hooks();
-    }
-    
-    /**
-     * Load required files
-     */
-    private function load_dependencies() {
-        require_once MPR_PLUGIN_DIR . 'includes/class-mpr-database.php';
-        require_once MPR_PLUGIN_DIR . 'includes/class-mpr-post-types.php';
-        require_once MPR_PLUGIN_DIR . 'includes/class-mpr-meta-fields.php';
-        require_once MPR_PLUGIN_DIR . 'includes/class-mpr-shortcodes.php';
-        require_once MPR_PLUGIN_DIR . 'includes/class-mpr-ajax.php';
-        require_once MPR_PLUGIN_DIR . 'includes/class-mpr-security.php';
-        require_once MPR_PLUGIN_DIR . 'includes/class-mpr-seo.php';
-        require_once MPR_PLUGIN_DIR . 'includes/class-mpr-user.php';
-        require_once MPR_PLUGIN_DIR . 'admin/class-mpr-admin.php';
-        require_once MPR_PLUGIN_DIR . 'frontend/class-mpr-frontend.php';
     }
     
     /**
      * Initialize hooks
      */
     private function init_hooks() {
-        add_action('plugins_loaded', array($this, 'load_textdomain'));
-        add_action('init', array($this, 'register_post_types'));
+        add_action('plugins_loaded', array($this, 'load_textdomain'), 1);
+        add_action('init', array($this, 'register_post_types'), 2);
         add_action('wp_enqueue_scripts', array($this, 'enqueue_assets'));
         add_action('wp_loaded', array($this, 'handle_form_submission'));
         
@@ -99,9 +82,45 @@ final class MPR_Reviews {
     }
     
     /**
+     * Load plugin dependencies
+     */
+    public function load_dependencies() {
+        // Load database functions first
+        require_once MPR_PLUGIN_DIR . 'includes/class-mpr-database.php';
+        
+        // Load post types
+        require_once MPR_PLUGIN_DIR . 'includes/class-mpr-post-types.php';
+        
+        // Load meta fields
+        require_once MPR_PLUGIN_DIR . 'includes/class-mpr-meta-fields.php';
+        
+        // Load shortcodes
+        require_once MPR_PLUGIN_DIR . 'includes/class-mpr-shortcodes.php';
+        
+        // Load AJAX handlers
+        require_once MPR_PLUGIN_DIR . 'includes/class-mpr-ajax.php';
+        
+        // Load security
+        require_once MPR_PLUGIN_DIR . 'includes/class-mpr-security.php';
+        
+        // Load SEO
+        require_once MPR_PLUGIN_DIR . 'includes/class-mpr-seo.php';
+        
+        // Load user management
+        require_once MPR_PLUGIN_DIR . 'includes/class-mpr-user.php';
+        
+        // Load admin
+        require_once MPR_PLUGIN_DIR . 'admin/class-mpr-admin.php';
+        
+        // Load frontend
+        require_once MPR_PLUGIN_DIR . 'frontend/class-mpr-frontend.php';
+    }
+    
+    /**
      * Register custom post types
      */
     public function register_post_types() {
+        $this->load_dependencies();
         MPR_Post_Types::register();
     }
     
@@ -140,6 +159,7 @@ final class MPR_Reviews {
             return;
         }
         
+        $this->load_dependencies();
         MPR_Ajax::handle_review_submission();
     }
     
@@ -147,6 +167,7 @@ final class MPR_Reviews {
      * AJAX submit review
      */
     public function ajax_submit_review() {
+        $this->load_dependencies();
         check_ajax_referer('mpr_nonce', 'nonce');
         MPR_Ajax::handle_review_submission(true);
     }
@@ -155,6 +176,7 @@ final class MPR_Reviews {
      * AJAX search businesses
      */
     public function ajax_search_businesses() {
+        $this->load_dependencies();
         check_ajax_referer('mpr_nonce', 'nonce');
         MPR_Ajax::handle_business_search();
     }
@@ -163,52 +185,48 @@ final class MPR_Reviews {
      * AJAX rate review
      */
     public function ajax_rate_review() {
+        $this->load_dependencies();
         check_ajax_referer('mpr_nonce', 'nonce');
         MPR_Ajax::handle_review_rating();
     }
-}
-
-/**
- * Initialize plugin
- */
-function mpr_reviews_init() {
-    return MPR_Reviews::get_instance();
-}
-
-// Start the plugin
-add_action('plugins_loaded', 'mpr_reviews_init', 0);
-
-/**
- * Activation hook
- */
-register_activation_hook(__FILE__, function() {
-    // Load database functions
-    require_once dirname(__FILE__) . '/includes/class-mpr-database.php';
     
-    // Create custom database tables
-    mpr_create_tables();
-    
-    // Set default options
-    $defaults = array(
-        'mpr_reviews_per_page' => 10,
-        'mpr_notify_admin' => true,
-        'mpr_admin_email' => get_option('admin_email'),
-        'mpr_require_registration' => false,
-    );
-    
-    foreach ($defaults as $key => $value) {
-        if (get_option($key) === false) {
-            add_option($key, $value);
+    /**
+     * Setup plugin on activation
+     */
+    public static function activate() {
+        // Set default options
+        $defaults = array(
+            'mpr_reviews_per_page' => 10,
+            'mpr_notify_admin' => true,
+            'mpr_admin_email' => get_option('admin_email'),
+            'mpr_require_registration' => false,
+        );
+        
+        foreach ($defaults as $key => $value) {
+            if (get_option($key) === false) {
+                add_option($key, $value);
+            }
         }
+        
+        // Create database tables
+        require_once MPR_PLUGIN_DIR . 'includes/class-mpr-database.php';
+        mpr_create_tables();
+        
+        // Flush rewrite rules
+        flush_rewrite_rules();
     }
     
-    // Flush rewrite rules
-    flush_rewrite_rules();
-});
+    /**
+     * Cleanup on deactivation
+     */
+    public static function deactivate() {
+        flush_rewrite_rules();
+    }
+}
 
-/**
- * Deactivation hook
- */
-register_deactivation_hook(__FILE__, function() {
-    flush_rewrite_rules();
-});
+// Initialize plugin
+add_action('plugins_loaded', array('MPR_Reviews', 'get_instance'), 1);
+
+// Register activation/deactivation hooks
+register_activation_hook(__FILE__, array('MPR_Reviews', 'activate'));
+register_deactivation_hook(__FILE__, array('MPR_Reviews', 'deactivate'));
