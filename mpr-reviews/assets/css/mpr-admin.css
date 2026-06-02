@@ -1,0 +1,172 @@
+/**
+ * MPR Reviews Admin Styles
+ */
+
+/* Dashboard Styles */
+.mpr-admin-dashboard .mpr-dashboard-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin: 20px 0;
+}
+
+.mpr-admin-dashboard .mpr-stat-box {
+    background: #fff;
+    border: 1px solid #ccd0d4;
+    border-radius: 4px;
+    padding: 20px;
+    text-align: center;
+}
+
+.mpr-admin-dashboard .mpr-stat-warning {
+    border-left: 4px solid #f0ad4e;
+}
+
+.mpr-admin-dashboard .mpr-stat-number {
+    font-size: 32px;
+    font-weight: bold;
+    margin: 10px 0;
+    color: #23282d;
+}
+
+.mpr-admin-dashboard .mpr-stat-link a {
+    color: #0073aa;
+    text-decoration: none;
+}
+
+.mpr-admin-dashboard .mpr-dashboard-sections {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+@media (max-width: 1200px) {
+    .mpr-admin-dashboard .mpr-dashboard-sections {
+        grid-template-columns: 1fr;
+    }
+}
+
+.mpr-admin-dashboard .mpr-dashboard-section {
+    background: #fff;
+    border: 1px solid #ccd0d4;
+    border-radius: 4px;
+    padding: 20px;
+}
+
+.mpr-admin-dashboard .mpr-dashboard-section h2 {
+    margin-top: 0;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.mpr-admin-dashboard .mpr-quick-links {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.mpr-admin-dashboard .mpr-quick-links li {
+    margin-bottom: 10px;
+}
+
+.mpr-admin-dashboard .mpr-quick-links a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    background: #f8f9fa;
+    border-radius: 4px;
+    text-decoration: none;
+    color: #23282d;
+}
+
+.mpr-admin-dashboard .mpr-quick-links a:hover {
+    background: #e2e4e7;
+}
+
+.mpr-admin-dashboard .mpr-quick-links .dashicons {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+}
+
+/* Settings Page Styles */
+.mpr-admin-settings .mpr-settings-section {
+    background: #fff;
+    border: 1px solid #ccd0d4;
+    border-radius: 4px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.mpr-admin-settings .mpr-settings-section h2 {
+    margin-top: 0;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee;
+}
+
+/* Admin Columns Styles */
+.mpr-admin-rating {
+    color: #f0ad4e;
+}
+
+.mpr-admin-rating::before {
+    content: '★ ';
+}
+
+.mpr-status {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 3px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.mpr-status.pending {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.mpr-status.approved {
+    background: #d4edda;
+    color: #155724;
+}
+
+.mpr-status.rejected {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+/* Admin Meta Box Styles */
+.mpr-meta-box,
+.mpr-review-meta {
+    padding: 10px 0;
+}
+
+.mpr-meta-box label,
+.mpr-review-meta label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.mpr-rating-stats {
+    background: #f0f0f0;
+    padding: 15px;
+    margin-top: 20px;
+    border-radius: 4px;
+}
+
+.mpr-rating-stats h4 {
+    margin: 0 0 10px 0;
+}
+
+/* Column Headers */
+.column-mpr_reviewer_info { width: 120px; }
+.column-mpr_business { width: 150px; }
+.column-mpr_rating { width: 80px; }
+.column-mpr_status { width: 90px; }
+.column-mpr_business_rating { width: 80px; }
+.column-mpr_business_reviews { width: 80px; }
+.column-mpr_business_category { width: 120px; }
