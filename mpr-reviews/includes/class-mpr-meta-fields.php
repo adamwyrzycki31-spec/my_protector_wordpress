@@ -304,30 +304,43 @@ class MPR_Meta_Fields {
     }
     
     /**
+    
+    /**
      * Calculate average rating for a business
      */
     public static function calculate_average_rating($business_id) {
         global $wpdb;
         
-        $query = $wpdb->prepare("
-            SELECT AVG(meta_value) as average
-            FROM {$wpdb->postmeta}
-            WHERE post_id IN (
-                SELECT ID FROM {$wpdb->posts}
-                WHERE post_type = 'mpr_review'
-                AND post_status = 'publish'
-            )
-            AND meta_key = 'mpr_review_rating'
-            AND post_id IN (
-                SELECT post_id FROM {$wpdb->postmeta}
-                WHERE meta_key = 'mpr_business_id'
-                AND meta_value = %d
-            )
-        ", $business_id);
+        $business_id = absint($business_id);
         
-        $result = $wpdb->get_var($query);
+        // Use WP_Query for better compatibility
+        $args = array(
+            'post_type' => 'mpr_review',
+            'post_status' => 'publish',
+            'posts_per_page' => -1,
+            'meta_key' => 'mpr_business_id',
+            'meta_value' => $business_id,
+        );
         
-        return $result ? round((float)$result, 1) : '0.0';
+        $query = new WP_Query($args);
+        
+        if (!$query->have_posts()) {
+            return '0.0';
+        }
+        
+        $total = 0;
+        $count = 0;
+        
+        foreach ($query->posts as $post) {
+            $rating = get_post_meta($post->ID, 'mpr_review_rating', true);
+            if ($rating !== '' && is_numeric($rating)) {
+                $total += floatval($rating);
+                $count++;
+            }
+        }
+        
+        return $count > 0 ? round($total / $count, 1) : '0.0';
+    }
     }
     
     /**

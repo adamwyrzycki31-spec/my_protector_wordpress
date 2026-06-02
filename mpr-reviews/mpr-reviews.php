@@ -182,6 +182,9 @@ add_action('plugins_loaded', 'mpr_reviews_init', 0);
  * Activation hook
  */
 register_activation_hook(__FILE__, function() {
+    // Load database functions
+    require_once dirname(__FILE__) . '/includes/class-mpr-database.php';
+    
     // Create custom database tables
     mpr_create_tables();
     
