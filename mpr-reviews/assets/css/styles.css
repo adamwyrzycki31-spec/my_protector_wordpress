@@ -1,0 +1,8 @@
+/* MPR Reviews - Minimal Styles */
+.mpr-business-card {
+    border: 1px solid #ddd;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 4px;
+}
+.mpr-star { color: #ffc107; }
